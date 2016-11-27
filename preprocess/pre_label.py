@@ -4,11 +4,12 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-label_chunks = pd.read_csv("/home/jason/datamining/datasets/train_label.csv")
+label_chunks = pd.read_csv("/home/jason/datamining/datasets/test_label.csv")
 #label_chunks = label_chunks.head(10)
 
 label_chunks["user_id"] = 0
 label_chunks["merchant_id"] = 0
+label_chunks["prob"] = 0
 
 for i in range(len(label_chunks)):
 	s = label_chunks.iloc[i,0].split("#")
@@ -17,4 +18,4 @@ for i in range(len(label_chunks)):
 
 label_chunks = label_chunks.drop('user_id#merchant_id',axis = 1)
 
-label_chunks.to_csv("/home/jason/datamining/data/train_label.csv", index = False)
+label_chunks.to_csv("/home/jason/datamining/data/test_label.csv", index = False)

@@ -1,18 +1,26 @@
 import numpy as np
-import pandas as pd
-from sklearn import svm
+
+from sklearn import linear_model, decomposition, datasets
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.linear_model import LogisticRegression
+from sklearn.grid_search import GridSearchCV
 
-train_label = pd.read_csv("/home/jason/datamining/datasets/train_label.csv")
-X_train = train_label.values[:,1]
-Y_train = train_label.values[:,:1]
 
-pipe_lr = Pipeline([('sc', StandardScaler()),
-                    ('pca', PCA(n_components=2)),
-                    ('clf', LogisticRegression(random_state=1))
-                    ])
-pipe_lr.fit(X_train, Y_train)
-#print('Test accuracy: %.3f' % pipe_lr.score(X_test, Y_test))
+digits = datasets.load_digits()
+X_digits = digits.data
+y_digits = digits.target
+
+# 定义管道，先降维(pca)，再逻辑回归
+pca = decomposition.PCA()
+logistic = linear_model.LogisticRegression()
+pipe = Pipeline(steps=[('pca', pca), ('logistic', logistic)])
+
+# 把管道再作为grid_search的estimator
+n_components = [20, 40, 64]
+Cs = np.logspace(-4, 4, 3)
+estimator = GridSearchCV(pipe, dict(pca__n_components=n_components, logistic__C=Cs))
+
+estimator.fit(X_digits, y_digits)
+
+estimator.predict(X_digits)
+
+print(estimator.score(X_digits, y_digits))
