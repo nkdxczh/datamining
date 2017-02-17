@@ -8,6 +8,7 @@ from models.models import *
 from ensemble.bagging import *
 from evaluation import *
 from ensemble.gridsearch import *
+from ensemble.boosting import *
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -21,49 +22,48 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.externals import joblib
 from sklearn.model_selection import cross_val_predict
 
+from sklearn.calibration import CalibratedClassifierCV
+
+import math
+
 if __name__ == '__main__':
-    print('testing bagging...')  
-    data_file = "/home/jason/datamining/data/train_combine.csv"
-    test_file = "/home/jason/datamining/data/test_combine.csv"
-    
+    data_file = "/home/jason/datamining/data/TFIDF/train_new.csv"
+    test_file = "/home/jason/datamining/data/TFIDF/test_new.csv"
+
     print('reading training and testing data...')    
-    X, y = read_data(data_file)
-    X = scale(X)
-    test_X, test_y = read_data(test_file)
+    X, y ,feature_name = read_data(data_file)
+    X = normalize(X)
+    test_X, test_y, feature_name = read_data(test_file)
     test_X = normalize(test_X)
 
     print('selecting features...')   
-    select_model = feature_select_et(X, y)
+    select_model = feature_select_et(X, y, feature_name)
     X = select_model.transform(X)
     test_X = select_model.transform(test_X)
 
     pca = feature_pca(X)
     X = pca.transform(X)
-    #X = normalize(X)
+    #X = scale(X)
     test_X = pca.transform(test_X)
-    #test_X = normalize(test_X)
-
-    '''for i in range(len(X[0])):
-        base = -min(X[:,i])
-        X[:,i] += base
-        test_X[:,i] += base'''
+    #test_X = scale(test_X)
 
     classifiers = {
         #'LIR': linear_regression_classifier(),
         #'LOR': logistic_regression_classifier(),
         #'GNB': gaussian_bayes_classifier(),
         #'MNB': naive_bayes_classifier(),
-        #'KNN': knn_classifier(),
+        'KNN': knn_classifier(),
         #'DT': decision_tree_classifier(),
         #'ET': extra_trees_classifier(),
-        #'RF': random_forest_classifier(),
+        'RF': random_forest_classifier(),
         #'SVM': svm_classifier(), 
         #'SVC': svm_cross_classifier(), 
         #'AB': ada_boost_validation(), 
         'GB': gradient_boosting_classifier()
         #'LD': linear_discriminant_analysis(),
         #'QD': quadratic_discriminant_analysis(),
-        #'NN' : neural_network_classifier()
+        #'NN' : neural_network_classifier(),
+        #'XG' : xgboost_classifier()
     }
 
     estimators = []
@@ -71,28 +71,24 @@ if __name__ == '__main__':
 
     for name, [clf, grid] in classifiers.items():
         print('calculating %s...' % name)   
-        #try:
-        #clf = gridsearch(clf, X, y, grid)
-        clf = bagging(clf, X, y)
+        #  clf = gridsearch(clf, X, y, grid)
+        #clf = CalibratedClassifierCV(clf, method='isotonic', cv=5)
+        #clf = bagging(clf, X, y)
+        try:
+            clf = gridsearch(clf, X, y, grid)
+        except:
+            print('no---')
+            continue
         estimators.append((name,clf))
         scores = cross_val_score(clf, X, y, scoring='log_loss')
-        weights.append(-1/scores.mean())
+        weights.append(1)
         print(name,'\t--> ',-scores.mean())
-        '''except:
-            print(name,'failed!')
-            if not len(estimators) == len(weights):
-                estimators.remove(len(estimators))'''
     
     eclf = VotingClassifier(estimators=estimators, voting='soft', weights=weights)
     scores = cross_val_score(eclf, X, y, scoring='log_loss')
     print('voting\t--> ',-scores.mean())
 
-    if -scores.mean() > 1/weights[0]:
-        eclf = estimators[0][1]
-
     eclf.fit(X, y)
-
-    joblib.dump(eclf, 'eclf.pkl')
 
     '''train_pred = eclf.predict_proba(X)
     
@@ -109,3 +105,35 @@ if __name__ == '__main__':
     for i in predict_y:
         out.write(str(i[1])+"\n")
     out.close()
+    '''
+    predict = []
+    for e in estimators:
+        p = e[1].predict_proba(X)
+        predict.append(p)
+    p = eclf.predict_proba(X)
+    predict.append(p)
+
+    output_train = open("/home/jason/datamining/data/predict_train_combine.csv",'w')
+    e = 0
+    for i in range(len(X)):
+        for j in range(len(estimators)+1):
+            output_train.write(str(float(predict[j][i][1])) + ',')
+        output_train.write('\n')
+
+    output_train.close()
+
+    test_predict = []
+    for e in estimators:
+        p = e[1].predict_proba(test_X)
+        test_predict.append(p)
+    p = eclf.predict_proba(test_X)
+    test_predict.append(p)
+
+    output_test = open("/home/jason/datamining/data/predict_test_combine.csv",'w')
+    e = 0
+    for i in range(len(test_X)):
+        for j in range(len(estimators)+1):
+            output_test.write(str(float(test_predict[j][i][1])) + ',')
+        output_test.write('\n')
+
+    output_test.close()'''

@@ -1,0 +1,5 @@
+
+if __name__ == '__main__':
+    print('testing bagging...')  
+    raw_data = open("/home/jason/datamining/data/train_combine.csv",'w')
+    test_file = "/home/jason/datamining/data/test_combine.csv

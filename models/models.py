@@ -45,14 +45,14 @@ def random_forest_classifier():
 def decision_tree_classifier():
     from sklearn.tree import DecisionTreeClassifier
     model = DecisionTreeClassifier(max_depth=5)
-    param_grid = {'max_depth' : list(range(1,11))}
+    param_grid = {'max_depth' : list(range(1,11,2))}
     return model, param_grid
  
 # GBDT(Gradient Boosting Decision Tree) Classifier
 def gradient_boosting_classifier():
     from sklearn.ensemble import GradientBoostingClassifier 
     model = GradientBoostingClassifier()
-    param_grid = {'n_estimators': list(range(100,200,10))}
+    param_grid = {'n_estimators': list(range(100,200,20))}
     return model, param_grid
 
 # SVM Classifier
@@ -100,5 +100,11 @@ def extra_trees_classifier():
 def neural_network_classifier():
     from sklearn.neural_network import MLPClassifier
     model = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
+    param_grid = dict()
+    return model, param_grid
+
+def xgboost_classifier():
+    from xgboost import XGBClassifier
+    model = XGBClassifier()
     param_grid = dict()
     return model, param_grid

@@ -19,7 +19,7 @@ warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
     print('testing gridsearch...')  
-    data_file = "/home/jason/datamining/data/train_combine.csv"
+    data_file = "/home/jason/datamining/data/TFIDF/train_new.csv"
     
     print('reading training and testing data...')    
     X, Y = read_data(data_file) 
@@ -63,10 +63,11 @@ if __name__ == '__main__':
     nnXrf = normalize(nXrf)
     nsXrf = scale(nXrf)
     
-    '''pca = feature_pca(nXls)
-    nXls = pca.transform(nXls)
-    nnXls = normalize(nXls)
-    nsXls = scale(nXls)'''
+    if len(sXls[0]) >= 3:
+        pca = feature_pca(nXls)
+        nXls = pca.transform(nXls)
+        nnXls = normalize(nXls)
+        nsXls = scale(nXls)
     
     pca = feature_pca(sXef)
     sXef = pca.transform(sXef)
@@ -100,107 +101,76 @@ if __name__ == '__main__':
     pz = nnXef[:,2]
     ax = fig.add_subplot(431, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = nnXrf[:,0]
     py = nnXrf[:,1]
     pz = nnXrf[:,2]
     ax = fig.add_subplot(432, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
-   
-    '''px = nnXls[:,0]
-    py = nnXls[:,1]
-    pz = nnXls[:,2]
-    ax = fig.add_subplot(433, projection='3d')
-    ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')'''
+    #ax.set_xlabel('X Label')
+    #ax.set_ylabel('Y Label')
+    #ax.set_zlabel('Z Label')
+
+    if len(nXls[0]) >= 3:
+        px = nnXls[:,0]
+        py = nnXls[:,1]
+        pz = nnXls[:,2]
+        ax = fig.add_subplot(433, projection='3d')
+        ax.scatter(px, py, pz, c=Y, marker='o')
    
     px = nsXef[:,0]
     py = nsXef[:,1]
     pz = nsXef[:,2]
     ax = fig.add_subplot(434, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = nsXrf[:,0]
     py = nsXrf[:,1]
     pz = nsXrf[:,2]
     ax = fig.add_subplot(435, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
-    '''px = nsXls[:,0]
-    py = nsXls[:,1]
-    pz = nsXls[:,2]
-    ax = fig.add_subplot(436, projection='3d')
-    ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')'''
+    if len(nXls[0]) >= 3:
+        px = nnXls[:,0]
+        py = nnXls[:,1]
+        pz = nnXls[:,2]
+        ax = fig.add_subplot(436, projection='3d')
+        ax.scatter(px, py, pz, c=Y, marker='o')
    
     px = ssXef[:,0]
     py = ssXef[:,1]
     pz = ssXef[:,2]
     ax = fig.add_subplot(437, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = ssXrf[:,0]
     py = ssXrf[:,1]
     pz = ssXrf[:,2]
     ax = fig.add_subplot(438, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = ssXls[:,0]
     py = ssXls[:,1]
     pz = ssXls[:,2]
     ax = fig.add_subplot(439, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = snXef[:,0]
     py = snXef[:,1]
     pz = snXef[:,2]
     ax = fig.add_subplot(4,3,10, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = snXrf[:,0]
     py = snXrf[:,1]
     pz = snXrf[:,2]
     ax = fig.add_subplot(4,3,11, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
    
     px = snXls[:,0]
     py = snXls[:,1]
     pz = snXls[:,2]
     ax = fig.add_subplot(4,3,12, projection='3d')
     ax.scatter(px, py, pz, c=Y, marker='o')
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
 
     plt.show()

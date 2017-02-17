@@ -14,13 +14,13 @@ for line in f:
         continue
 
     s = line.split(',')
-    c = int(s[29])+int(s[30])+int(s[31])+int(s[32])
+    c = int(s[32])
     if c > 20:
         tem = 20
     else:
         tem = c
     lc[tem] += 1
-    if c <= 3:
+    if c <= 0:
         o1.write(line)
         i1 += 1
     else:

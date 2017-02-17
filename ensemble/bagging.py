@@ -34,6 +34,12 @@ def bagging(model, train_x, train_y):
     bagging.fit(train_x, train_y)
     return bagging
 
+def calibration(model, train_x, train_y):
+    from sklearn.calibration import CalibratedClassifierCV
+    calibration = CalibratedClassifierCV(model, max_samples=0.5, max_features=0.5 )
+    calibration.fit(train_x, train_y)
+    return calibration
+
 if __name__ == '__main__':
      
     classifiers = {

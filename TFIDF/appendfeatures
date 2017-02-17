@@ -1,0 +1,27 @@
+raw = open("/home/jason/datamining/data/TFIDF/test.csv", 'r')
+new = open("/home/jason/datamining/data/TFIDF/newfeatures.csv", 'r')
+output = open("/home/jason/datamining/data/TFIDF/test_new.csv", 'w')
+
+test_size=130502
+train_size = 130365
+
+cnt=0
+for i in range(test_size):
+    if i == 0:
+        line1 = raw.readline()
+        line2 = new.readline()
+        output.write(line1.rstrip())
+        output.write(",item_similarity,cat_similarity,brand_similarity\n")
+        continue
+    if cnt%1000 == 0:
+        print(cnt)
+    cnt+=1
+
+    line1 = raw.readline()
+    line2 = new.readline()
+
+    output.write( line1.rstrip() + ',' + line2.rstrip() + '\n')
+
+raw.close()
+new.close()
+output.close()
